@@ -1,84 +1,91 @@
-// Variables pour le carrousel
+// Liste des slides
 const slides = [
     {
-        "image": "slide1.jpg",
-        "tagLine": "Impressions tous formats <span>en boutique et en ligne</span>"
+        "image":"slide1.jpg",
+        "tagLine":"Impressions tous formats <span>en boutique et en ligne</span>"
     },
     {
-        "image": "slide2.jpg",
-        "tagLine": "Tirages haute définition grand format <span>pour vos bureaux et events</span>"
+        "image":"slide2.jpg",
+        "tagLine":"Tirages haute définition grand format <span>pour vos bureaux et events</span>"
     },
     {
-        "image": "slide3.jpg",
-        "tagLine": "Grand choix de couleurs <span>de CMJN aux pantones</span>"
+        "image":"slide3.jpg",
+        "tagLine":"Grand choix de couleurs <span>de CMJN aux pantones</span>"
     },
     {
-        "image": "slide4.png",
-        "tagLine": "Autocollants <span>avec découpe laser sur mesure</span>"
+        "image":"slide4.png",
+        "tagLine":"Autocollants <span>avec découpe laser sur mesure</span>"
     }
 ];
 
-let currentSlide = 0; // Variable pour suivre l'index de la slide actuelle
+// Variables pour la navigation
+let currentSlide = 0;  // Index de la slide actuelle
 
-// Sélectionne les éléments du DOM à mettre à jour
-const bannerImg = document.querySelector('.banner-img');
-const bannerText = document.querySelector('#banner p');
-const arrowLeft = document.querySelector('.arrow_left');
-const arrowRight = document.querySelector('.arrow_right');
+// Sélection des éléments du DOM
+const bannerImage = document.querySelector('.banner-img');
+const bannerTagline = document.querySelector('#banner p');
+const leftArrow = document.querySelector('.arrow_left');
+const rightArrow = document.querySelector('.arrow_right');
 const dotsContainer = document.querySelector('.dots');
 
-// Fonction pour générer les bullet points dynamiquement
-function generateDots() {
-    slides.forEach((slide, index) => {
+// Fonction pour mettre à jour l'image et la légende du carrousel
+function updateSlide() {
+    const slide = slides[currentSlide];
+    bannerImage.src = `./assets/images/slideshow/${slide.image}`;
+    bannerTagline.innerHTML = slide.tagLine;
+}
+
+// Fonction pour créer les bullet points
+function createDots() {
+    slides.forEach((_, index) => {
         const dot = document.createElement('div');
         dot.classList.add('dot');
-        if (index === 0) {
-            dot.classList.add('dot_selected'); // Le premier point est sélectionné par défaut
+        if (index === currentSlide) {
+            dot.classList.add('dot_selected');
         }
         dotsContainer.appendChild(dot);
     });
 }
 
-// Fonction pour mettre à jour l'affichage du carrousel (image, texte, bullet points)
-function updateCarousel() {
-    // Mise à jour de l'image et du texte en fonction de la slide courante
-    bannerImg.src = `./assets/images/slideshow/${slides[currentSlide].image}`;
-    bannerText.innerHTML = slides[currentSlide].tagLine;
-
-    // Mise à jour des bullet points
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, index) => {
+// Fonction pour mettre à jour les bullet points
+function updateDots() {
+    const allDots = document.querySelectorAll('.dot');
+    allDots.forEach((dot, index) => {
         if (index === currentSlide) {
-            dot.classList.add('dot_selected'); // Active le bullet point courant
+            dot.classList.add('dot_selected');
         } else {
-            dot.classList.remove('dot_selected'); // Désactive les autres bullet points
+            dot.classList.remove('dot_selected');
         }
     });
 }
 
-// Ajoute les event listeners pour les flèches
-arrowLeft.addEventListener('click', () => {
-    // Si on est à la première image, on revient à la dernière
+// Fonction pour passer à la slide précédente (bouclage)
+function previousSlide() {
     if (currentSlide === 0) {
-        currentSlide = slides.length - 1;
+        currentSlide = slides.length - 1;  // Boucle vers la dernière slide
     } else {
-        currentSlide--;
+        currentSlide -= 1;
     }
-    updateCarousel();
-});
+    updateSlide();
+    updateDots();
+}
 
-arrowRight.addEventListener('click', () => {
-    // Si on est à la dernière image, on revient à la première
+// Fonction pour passer à la slide suivante (bouclage)
+function nextSlide() {
     if (currentSlide === slides.length - 1) {
-        currentSlide = 0;
+        currentSlide = 0;  // Boucle vers la première slide
     } else {
-        currentSlide++;
+        currentSlide += 1;
     }
-    updateCarousel();
-});
+    updateSlide();
+    updateDots();
+}
 
-// Générer les bullet points au chargement de la page
-generateDots();
+// Event listeners pour les flèches
+leftArrow.addEventListener('click', previousSlide);
+rightArrow.addEventListener('click', nextSlide);
 
-// Initialise le carrousel avec la première slide
-updateCarousel();
+// Initialiser le carrousel avec la première slide et créer les bullet points
+createDots();
+updateSlide();
+updateDots();
